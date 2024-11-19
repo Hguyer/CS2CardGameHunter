@@ -4,7 +4,6 @@ public class Player {
     private int points;
 
     public Player(){
-
     }
 
 }
