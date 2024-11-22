@@ -1,68 +1,168 @@
 import java.util.Scanner;
-import java.util.ArrayList;
+
 public class Game {
+    // define variables used later
     private Deck deck;
     private Player player;
     private Player dealer;
 
     public Game() {
+        // make the ranks suits and values, aces will be modified in calculatePoints later
         String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
         String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
         int[] values = {2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11};
-
+        // make a new deck
         deck = new Deck(ranks, suits, values);
+        // shuffle it
         deck.shuffle();
 
+        // get the players names
         Scanner names = new Scanner(System.in);
         System.out.print("Enter your name: ");
         String playerName = names.nextLine();
 
-        player = new Player("Player");
+        // make a new player called player and the dealer or the house
+        player = new Player(playerName);
 
         dealer = new Player("Dealer");
 
-        player.addCard(deck.deal());
-
-        player.addCard(deck.deal());
-
-        dealer.addCard(deck.deal());
-
-        dealer.addCard(deck.deal());
+        // give each 2 cards
+        for(int i = 0; i < 2; i++){
+            player.addCard(deck.deal());
+            dealer.addCard(deck.deal());
+        }
     }
+    // show instructions
     public static void printInstructions(){
-        System.out.println("This is your typical BlackjackGame, 1v1 you vs the house!");
-        System.out.println("You will start with two cards in your hand, the dealer only shows you 1!");
-        System.out.println("Your goal is to get to a value of 21, J,Q,K are all worth 10, A is 1 or 11!");
-        System.out.println("You can either grab another card from the deck by hitting, or finalize your value by staying!");
+        System.out.println("Welcome to Blackjack! You start with $100.");
+        System.out.println("In each round, you can bet a portion of your money.");
+        System.out.println("You can hit to get a card or stand to finalize your hand.");
+        System.out.println("J, Q, K are worth 10 points. Aces are 1 or 11.");
+        System.out.println("If you bust (go over 21), you lose your bet.");
+        System.out.println("If you win, you double your bet.");
+        System.out.println("The game ends when you run out of money.");
         System.out.println("That's all from me. Can you beat the house? Can you win BlackJack? We'll see ....");
+        System.out.println("\n\n ~~~~~~~~~~~~~~~~~~~\n\n");
     }
 
-    public void playGame(){
+    public void playGame() {
         printInstructions();
-        Scanner hitStand = new Scanner(System.in);
 
-        boolean playerBusted = false;
-        System.out.println(player);
-        System.out.println("Dealer's cards: " + dealer.getHand().get(0) + ", hidden card");
+        Scanner gamble = new Scanner(System.in);
+        boolean gameOn = true;
 
-        while (true) {
-            System.out.print("Would you like to hit or stand?: ");
-            String choice = hitStand.nextLine().toLowerCase();
-            if(choice.equals("hit")){
+        while (gameOn && player.getMoney() > 0) {
+            // Prompt to place a bet
+            System.out.println("\nYou have $" + player.getMoney());
+            System.out.print("How many points would you like to bet? ");
+            int bet = gamble.nextInt();
+
+            // Check if bet is valid
+            if (bet <= 0 || bet > player.getMoney()) {
+                System.out.println("Invalid bet. You have to bet a positive amount not greater than your current balence.");
+                continue;
+            }
+
+            // Reset hands for new round
+            player.getHand().clear();
+            dealer.getHand().clear();
+            for (int i = 0; i < 2; i++) {
                 player.addCard(deck.deal());
-                System.out.println(player);
-                if (calculatePoints(player) > 21) {
-                    int loseChoice = math.random()
-                    System.out.println("You busted Loser! So close to winning but not quite! HEHEHAWHAW! I WIN MONEY!");
-                    playerBusted = true;
+                dealer.addCard(deck.deal());
+            }
+
+            // Print the initial state of the game
+            System.out.println(player);
+            System.out.println("Dealer's cards: " + dealer.getHand().get(0) + ", hidden card");
+
+            // Player's turn
+            boolean playerBusted = false;
+            while (true) {
+                System.out.print("Would you like to hit or stand?: ");
+                String choice = gamble.nextLine().toLowerCase();
+
+                if (choice.equals("hit")) {
+                    player.addCard(deck.deal());
+                    System.out.println(player);
+                    if (calculateValue(player) > 21) {
+                        System.out.println("You busted!");
+                        playerBusted = true;
+                        break;
+                    }
+                } else if (choice.equals("stand")) {
                     break;
-                }
-                else if(choice.equals("stand")){
-                    break;
-                }
-                else{
-                    System.out.println("Come on man, it's hit or stand, not that hard to spell :(");
+                } else {
+                    System.out.println("Invalid choice. Please enter 'hit' or 'stand'.");
                 }
             }
+
+            // If player busted, they lose the bet
+            if (playerBusted) {
+                System.out.println("You lost the round! You lose $ " + bet);
+                player.updateMoney(-bet);
+                dealer.updateMoney(bet);
+            } else {
+                // Dealer's turn
+                System.out.println("\nDealer's turn:");
+                while (calculateValue(dealer) < 17) {
+                    System.out.println("Dealer hits.");
+                    dealer.addCard(deck.deal());
+                    System.out.println(dealer);
+                }
+
+                if (calculateValue(dealer) > 21) {
+                    System.out.println("Dealer busted! You win the round!");
+                    player.updateMoney(bet);
+                    dealer.updateMoney(-bet);
+
+                } else {
+                    determineWinner(bet);
+                }
+            }
+            // Check if player still has money
+            if (player.getMoney() <= 0) {
+                System.out.println("Game over! You're broke :(");
+                gameOn = false;
+            }
         }
+    }
+    private int calculateValue(Player player) {
+        int points = 0;
+        int aces = 0;
+        for (Card card : player.getHand()) {
+            points += card.getValue();
+            if (card.getRank().equals("A")) {
+                aces++;
+            }
+        }
+        while (points > 21 && aces > 0) {
+            points -= 10;
+            aces--;
+        }
+        return points;
+    }
+
+    private void determineWinner(int bet) {
+        int playerPoints = calculateValue(player);
+        int dealerPoints = calculateValue(dealer);
+
+        System.out.println("\nFinal Results:");
+        System.out.println(player);
+        System.out.println(dealer);
+
+        if (playerPoints > dealerPoints) {
+            System.out.println("You win! You gain $ " + bet);
+            player.updateMoney(bet);  // Player wins the bet
+        } else if (playerPoints < dealerPoints) {
+            System.out.println("Dealer wins! You lose $ " + bet);
+            player.updateMoney(-bet);  // Player loses the bet
+        } else {
+            System.out.println("It's a tie! No money change hands.");
+        }
+    }
+
+    public static void main(String[] args) {
+        Game blackjackGame = new Game();
+        blackjackGame.playGame();
+    }
 }

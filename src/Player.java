@@ -2,18 +2,18 @@ import java.util.ArrayList;
 public class Player {
     private String name;
     private ArrayList<Card> hand;
-    private int points;
+    private int money;
 
     public Player(String name) {
         this.name = name;
         this.hand = new ArrayList<>();
-        this.points = 0;
+        this.money = 100000;
     }
 
     public Player(String name, ArrayList<Card> hand) {
         this.name = name;
         this.hand = hand;
-        this.points = 0;
+        this.money = 100000;
     }
 
     public String getName() {
@@ -24,12 +24,12 @@ public class Player {
         return hand;
     }
 
-    public int getPoints() {
-        return points;
+    public int getMoney() {
+        return money;
     }
 
-    public void addPoints(int pointsToAdd) {
-        this.points += pointsToAdd;
+    public void updateMoney(int amount) {
+        this.money += amount;
     }
 
     public void addCard(Card card) {
@@ -37,6 +37,6 @@ public class Player {
     }
 
     public String toString() {
-        return name + " has " + points + " points\n" + name + "'s cards: " + hand;
+        return name + "'s cards: " + hand + " & has $" + money;
     }
 }
