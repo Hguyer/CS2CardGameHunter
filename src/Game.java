@@ -54,7 +54,7 @@ public class Game {
         while (gameOn && player.getMoney() > 0) {
             // Prompt to place a bet
             System.out.println("\nYou have $" + player.getMoney());
-            System.out.print("How many points would you like to bet? ");
+            System.out.print("How much would you like to bet? ");
             int bet = gamble.nextInt();
 
             // Check if bet is valid
@@ -77,9 +77,11 @@ public class Game {
 
             // Player's turn
             boolean playerBusted = false;
+            //infinate loop
             while (true) {
                 System.out.print("Would you like to hit or stand?: ");
                 String choice = gamble.nextLine().toLowerCase();
+                gamble.nextLine();
 
                 if (choice.equals("hit")) {
                     player.addCard(deck.deal());
@@ -165,4 +167,3 @@ public class Game {
         Game blackjackGame = new Game();
         blackjackGame.playGame();
     }
-}

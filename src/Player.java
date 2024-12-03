@@ -37,6 +37,17 @@ public class Player {
     }
 
     public String toString() {
-        return name + "'s cards: " + hand + " & has $" + money;
+        int handValue = 0;
+        int aces = 0;
+        for (Card card : hand) {
+            handValue += card.getValue();
+            if (card.getRank().equals("A")) {
+                aces++;
+            }
+        }
+        while (handValue > 21 && aces > 0) {
+            handValue -= 10;
+            aces--;
+        }        return name + "'s cards: " + hand + " which is equal to " + handValue;
     }
 }
