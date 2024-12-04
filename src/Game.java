@@ -27,13 +27,14 @@ public class Game {
         dealer = new Player("Dealer");
 
         // give each 2 cards
-        for(int i = 0; i < 2; i++){
+        for (int i = 0; i < 2; i++) {
             player.addCard(deck.deal());
             dealer.addCard(deck.deal());
         }
     }
+
     // show instructions
-    public static void printInstructions(){
+    public static void printInstructions() {
         System.out.println("Welcome to Blackjack! You start with $100.");
         System.out.println("In each round, you can bet a portion of your money.");
         System.out.println("You can hit to get a card or stand to finalize your hand.");
@@ -128,6 +129,7 @@ public class Game {
             }
         }
     }
+
     private int calculateValue(Player player) {
         int points = 0;
         int aces = 0;
@@ -167,3 +169,4 @@ public class Game {
         Game blackjackGame = new Game();
         blackjackGame.playGame();
     }
+}
