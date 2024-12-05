@@ -176,6 +176,7 @@ public class Game {
             System.out.println("It's a tie! No money change hands.");
         }
     }
+
 // play the game
     public static void main(String[] args) {
         Game blackjackGame = new Game();

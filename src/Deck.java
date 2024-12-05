@@ -16,6 +16,7 @@ public class Deck {
         }
         cardsLeft = cards.size();
     }
+
     // check if there are no cards left
     public boolean isEmpty(){
         return cardsLeft == 0;

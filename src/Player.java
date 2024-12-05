@@ -10,6 +10,7 @@ public class Player {
         this.hand = new ArrayList<>();
         this.money = 100000;
     }
+
     // if they specify a hand give them their hand
     public Player(String name, ArrayList<Card> hand) {
         this.name = name;
