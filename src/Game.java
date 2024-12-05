@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 public class Game {
+
     // define variables used later
     private Deck deck;
     private Player player;
