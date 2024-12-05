@@ -49,9 +49,12 @@ public class Game {
     public void playGame() {
         printInstructions();
 
+        // create a new scanner to get all the inputs for the game
         Scanner gamble = new Scanner(System.in);
+        // set the game on to true, if it is ever false the game is over
         boolean gameOn = true;
 
+        // when the game isn't over and you still can bet play the game
         while (gameOn && player.getMoney() > 0) {
             // Prompt to place a bet
             System.out.println("\nYou have $" + player.getMoney());
@@ -81,12 +84,14 @@ public class Game {
             //infinate loop
             while (true) {
                 System.out.print("Would you like to hit or stand?: ");
+                // make everything a uniform lowercase to avoid capital letter mistakes
                 String choice = gamble.nextLine().toLowerCase();
                 gamble.nextLine();
-
+                // if you hit you get a card and display your deck if you stand your turn ends
                 if (choice.equals("hit")) {
                     player.addCard(deck.deal());
                     System.out.println(player);
+                    // if you have more then 21 you bust
                     if (calculateValue(player) > 21) {
                         System.out.println("You busted!");
                         playerBusted = true;
@@ -95,7 +100,7 @@ public class Game {
                 } else if (choice.equals("stand")) {
                     break;
                 } else {
-                    System.out.println("Invalid choice. Please enter 'hit' or 'stand'.");
+                    System.out.println("Invalid choice. Enter only 'hit' or 'stand'.");
                 }
             }
 
@@ -107,18 +112,21 @@ public class Game {
             } else {
                 // Dealer's turn
                 System.out.println("\nDealer's turn:");
+                // when they have less then 17 they have to hit
                 while (calculateValue(dealer) < 17) {
                     System.out.println("Dealer hits.");
                     dealer.addCard(deck.deal());
                     System.out.println(dealer);
                 }
-
+                // if they bust you win
                 if (calculateValue(dealer) > 21) {
                     System.out.println("Dealer busted! You win the round!");
                     player.updateMoney(bet);
                     dealer.updateMoney(-bet);
 
-                } else {
+                } else
+                // if nobody busts you have to determine who won by compearing the values of each hand
+                {
                     determineWinner(bet);
                 }
             }
@@ -132,13 +140,16 @@ public class Game {
 
     private int calculateValue(Player player) {
         int points = 0;
+        // create the aces problem
         int aces = 0;
         for (Card card : player.getHand()) {
+            // add the value of the cards to points
             points += card.getValue();
             if (card.getRank().equals("A")) {
                 aces++;
             }
         }
+        // if you bust but have an ace the ace value becomes 1
         while (points > 21 && aces > 0) {
             points -= 10;
             aces--;
@@ -154,17 +165,18 @@ public class Game {
         System.out.println(player);
         System.out.println(dealer);
 
+        // compeare the points if you win update your money
         if (playerPoints > dealerPoints) {
             System.out.println("You win! You gain $ " + bet);
-            player.updateMoney(bet);  // Player wins the bet
+            player.updateMoney(bet);
         } else if (playerPoints < dealerPoints) {
             System.out.println("Dealer wins! You lose $ " + bet);
-            player.updateMoney(-bet);  // Player loses the bet
+            player.updateMoney(-bet);
         } else {
             System.out.println("It's a tie! No money change hands.");
         }
     }
-
+// play the game
     public static void main(String[] args) {
         Game blackjackGame = new Game();
         blackjackGame.playGame();

@@ -3,12 +3,13 @@ public class Card {
     private String suit;
     private int value;
 
+    // make a constructor giving the ran suit and value of each card
     public Card(String rank, String suit, int value){
         this.rank = rank;
         this.suit = suit;
         this.value = value;
     }
-
+    // use the propper getters and setters for each varriable
     public String getRank() {
         return rank;
     }
