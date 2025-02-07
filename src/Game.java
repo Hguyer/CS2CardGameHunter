@@ -87,7 +87,6 @@ public class Game {
                 System.out.print("Would you like to hit or stand?: ");
                 // make everything a uniform lowercase to avoid capital letter mistakes
                 String choice = gamble.nextLine().toLowerCase();
-                gamble.nextLine();
                 // if you hit you get a card and display your deck if you stand your turn ends
                 if (choice.equals("hit")) {
                     player.addCard(deck.deal());
