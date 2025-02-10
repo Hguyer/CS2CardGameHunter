@@ -8,6 +8,7 @@ public class Game {
     private Player player;
     private Player dealer;
     private GameViewer viewer;
+    private boolean dealerTurn = false;
 
     public Game() {
         viewer = new GameViewer(this);
@@ -126,15 +127,23 @@ public class Game {
             viewer.refresh();
         }
     }
+    // Add a new method to determine dealers turn
+    public boolean isDealerTurn() {
+        return dealerTurn;
+    }
     private void dealerTurn(int bet) {
         System.out.println("\nDealer's turn:");
+        //set the dealers turn to true and refresh the window
+        dealerTurn = true;
+        viewer.refresh();
+        // hit the dealer
         while (calculateValue(dealer) < 17) {
             System.out.println("Dealer hits.");
             dealer.addCard(deck.deal());
             viewer.refresh();
             System.out.println(dealer);
         }
-
+        // dealer busts message
         if (calculateValue(dealer) > 21) {
             System.out.println("Dealer busted! You win the round!");
             player.updateMoney(bet);
@@ -181,7 +190,7 @@ public class Game {
             System.out.println("It's a tie! No money change hands.");
         }
     }
-
+    //define some methods used in the GameViewer
     public ArrayList<Card> getDealerHand() {
         return dealer.getHand();
     }
@@ -195,7 +204,10 @@ public class Game {
     }
 
     public String getGameResult() {
-        return isGameOver() ? "Game over! You're out of money." : "";
+        if(isGameOver()){
+            return"Game over! You're out of money.";
+        }
+        return "";
     }
 
 // play the game
