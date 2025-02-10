@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Game {
@@ -6,8 +7,10 @@ public class Game {
     private Deck deck;
     private Player player;
     private Player dealer;
+    private GameViewer viewer;
 
     public Game() {
+        viewer = new GameViewer(this);
         // make the ranks suits and values, aces will be modified in calculatePoints later
         String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
         String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
@@ -27,7 +30,19 @@ public class Game {
 
         dealer = new Player("Dealer");
 
-        // give each 2 cards
+
+        dealInitialHands();
+
+        viewer.refresh();
+    }
+    private void dealInitialHands() {
+        player.getHand().clear();
+        dealer.getHand().clear();
+
+        if (deck.getCardsLeft() < 4) {
+            deck.shuffle();
+        }
+
         for (int i = 0; i < 2; i++) {
             player.addCard(deck.deal());
             dealer.addCard(deck.deal());
@@ -67,19 +82,9 @@ public class Game {
                 System.out.println("Invalid bet. You have to bet a positive amount not greater than your current balence.");
                 continue;
             }
-
-            // Reset hands for new round
-            player.getHand().clear();
-            dealer.getHand().clear();
-            for (int i = 0; i < 2; i++) {
-                player.addCard(deck.deal());
-                dealer.addCard(deck.deal());
-            }
-
-            // Print the initial state of the game
-            System.out.println(player);
-            System.out.println("Dealer's cards: " + dealer.getHand().get(0) + ", hidden card");
-
+            gamble.nextLine();
+            dealInitialHands();
+            viewer.refresh();
             // Player's turn
             boolean playerBusted = false;
             //infinate loop
@@ -90,6 +95,7 @@ public class Game {
                 // if you hit you get a card and display your deck if you stand your turn ends
                 if (choice.equals("hit")) {
                     player.addCard(deck.deal());
+                    viewer.refresh();
                     System.out.println(player);
                     // if you have more then 21 you bust
                     if (calculateValue(player) > 21) {
@@ -106,35 +112,34 @@ public class Game {
 
             // If player busted, they lose the bet
             if (playerBusted) {
-                System.out.println("You lost the round! You lose $ " + bet);
+                System.out.println("You lost the round! You lose $" + bet);
                 player.updateMoney(-bet);
                 dealer.updateMoney(bet);
             } else {
-                // Dealer's turn
-                System.out.println("\nDealer's turn:");
-                // when they have less then 17 they have to hit
-                while (calculateValue(dealer) < 17) {
-                    System.out.println("Dealer hits.");
-                    dealer.addCard(deck.deal());
-                    System.out.println(dealer);
-                }
-                // if they bust you win
-                if (calculateValue(dealer) > 21) {
-                    System.out.println("Dealer busted! You win the round!");
-                    player.updateMoney(bet);
-                    dealer.updateMoney(-bet);
-
-                } else
-                // if nobody busts you have to determine who won by compearing the values of each hand
-                {
-                    determineWinner(bet);
-                }
+                dealerTurn(bet);
             }
-            // Check if player still has money
+
             if (player.getMoney() <= 0) {
-                System.out.println("Game over! You're broke :(");
+                System.out.println("Game over! You're broke.");
                 gameOn = false;
             }
+            viewer.refresh();
+        }
+    }
+    private void dealerTurn(int bet) {
+        System.out.println("\nDealer's turn:");
+        while (calculateValue(dealer) < 17) {
+            System.out.println("Dealer hits.");
+            dealer.addCard(deck.deal());
+            viewer.refresh();
+            System.out.println(dealer);
+        }
+
+        if (calculateValue(dealer) > 21) {
+            System.out.println("Dealer busted! You win the round!");
+            player.updateMoney(bet);
+        } else {
+            determineWinner(bet);
         }
     }
 
@@ -177,9 +182,25 @@ public class Game {
         }
     }
 
-// play the game
-    public static void main(String[] args) {
-        Game blackjackGame = new Game();
-        blackjackGame.playGame();
+    public ArrayList<Card> getDealerHand() {
+        return dealer.getHand();
     }
+
+    public ArrayList<Card> getPlayerHand() {
+        return player.getHand();
+    }
+
+    public boolean isGameOver() {
+        return player.getMoney() <= 0;
+    }
+
+    public String getGameResult() {
+        return isGameOver() ? "Game over! You're out of money." : "";
+    }
+
+// play the game
+public static void main(String[] args) {
+    Game blackjackGame = new Game();
+    blackjackGame.playGame();
+}
 }

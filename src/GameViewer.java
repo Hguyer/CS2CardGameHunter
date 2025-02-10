@@ -12,6 +12,8 @@ public class GameViewer extends JFrame {
     private static final int PLAYER_Y = 300;
     private static final int DEALER_Y = 100;
     private Game backend;
+    private ArrayList<Card> playerHand;
+
 
     public GameViewer(Game back) {
         this.backend = back;
@@ -21,20 +23,44 @@ public class GameViewer extends JFrame {
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setVisible(true);
     }
+    @Override
+    public void paint(Graphics g) {
+        // Clear the window
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
+        // Draw the player's and dealer's hands
+        drawHand(g, backend.getDealerHand(), START_X, DEALER_Y, true);
+        drawHand(g, backend.getPlayerHand(), START_X, PLAYER_Y, false);
+
+        // Display messages
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        if (backend.isGameOver()) {
+            g.drawString(backend.getGameResult(), START_X, WINDOW_HEIGHT - 50);
+        } else {
+            g.drawString("Enter 'hit' or 'stay' in the console.", START_X, WINDOW_HEIGHT - 50);
+        }
+    }
     private void drawHand(Graphics g, ArrayList<Card> hand, int x, int y, boolean hideFirstCard) {
+        int cardSpace = CARD_WIDTH + CARD_SPACING;
         for (int i = 0; i < hand.size(); i++) {
-            String imagePath;
-            if (i == 0 && hideFirstCard) {
-                imagePath = "Resources/back.png";
+            Card card = hand.get(i);
+            if (hideFirstCard && i == 0) {
+                drawCard(g, "Resources/back.png", x + (i * cardSpace), y); // Assuming a back card image
             } else {
-                imagePath = "Resources/" + i + ".png";
+                String cardFilename = card.getRank() + card.getSuit() + ".png";
+                drawCard(g, "Resources/" + cardFilename, x + (i * cardSpace), y);
             }
-            drawCard(g, imagePath, x + i * (CARD_WIDTH + CARD_SPACING), y);
         }
     }
     private void drawCard(Graphics g, String imagePath, int x, int y) {
         ImageIcon cardIcon = new ImageIcon(imagePath);
-        g.drawImage(cardIcon.getImage(), x, y, CARD_WIDTH, CARD_HEIGHT, this);
+        Image img = cardIcon.getImage();
+        g.drawImage(img, x, y, GameViewer.CARD_WIDTH, GameViewer.CARD_HEIGHT, this);
+
+    }
+    public void refresh() {
+        this.repaint();
     }
 }
