@@ -13,6 +13,11 @@ public class GameViewer extends JFrame {
     private static final int DEALER_Y = 100;
     private Game backend;
     private Image backgroundImage;
+    private Image welcomeImage;
+    private Image winImage;
+    private Image loseImage;
+    private boolean welcomeScreen = true;
+    private boolean gameOverScreen = false;
 
 
     public GameViewer(Game back) {
@@ -23,27 +28,40 @@ public class GameViewer extends JFrame {
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setVisible(true);
         // set the background image
+        welcomeImage = new ImageIcon("Resources/Welcome.png").getImage();
         backgroundImage = new ImageIcon("Resources/Background.png").getImage();
+        winImage = new ImageIcon("Resources/Winner.png").getImage();
+        loseImage = new ImageIcon("Resources/Loser.png").getImage();
     }
+
     @Override
     public void paint(Graphics g) {
-        // Clear the window
-        g.drawImage(backgroundImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+        super.paint(g);
+        if (welcomeScreen) {
+            g.drawImage(welcomeImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.BOLD, 30));
+            g.drawString("Type anything to start the game!", START_X, WINDOW_HEIGHT - 100);
+        }
+        else if (gameOverScreen) {
+            if (backend.determineWinner() == backend.player) {
+                g.drawImage(winImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+            }
+            else {
+                g.drawImage(loseImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+            }
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.BOLD, 30));
+            g.drawString("To continue, type anything in the console!", START_X, WINDOW_HEIGHT - 100);
+        }
+        else {
+            g.drawImage(backgroundImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
 
-        // Draw the player's and dealer's hands
-        // Use hideFirstCard for the players turn, but when it is the dealers turn show it
-        boolean hideFirstCard = !backend.isDealerTurn();
-        drawHand(g, backend.getDealerHand(), START_X, DEALER_Y, hideFirstCard);
+            drawHand(g, backend.getPlayerHand(), START_X, PLAYER_Y, false);
+            drawHand(g, backend.getDealerHand(), START_X, DEALER_Y, !backend.isDealerTurn());
 
-        drawHand(g, backend.getPlayerHand(), START_X, PLAYER_Y, false);
-
-        // Display messages
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
-
-        if (backend.isGameOver()) {
-            g.drawString(backend.getGameResult(), START_X, WINDOW_HEIGHT - 20);
-        } else {
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.PLAIN, 20));
             g.drawString("Enter 'hit' or 'stay' in the console to continue.", START_X, WINDOW_HEIGHT - 20);
         }
     }
@@ -64,8 +82,27 @@ public class GameViewer extends JFrame {
         Image img = cardIcon.getImage();
         g.drawImage(img, x, y, GameViewer.CARD_WIDTH, GameViewer.CARD_HEIGHT, this);
 
+    } public void showWelcomeScreen() {
+        welcomeScreen = true;
+        gameOverScreen = false;
+        this.repaint();
     }
+
+    public void showWinScreen() {
+        welcomeScreen = false;
+        gameOverScreen = true;
+        this.repaint();
+    }
+
+    public void showLoseScreen() {
+        welcomeScreen = false;
+        gameOverScreen = true;
+        this.repaint();
+    }
+
     public void refresh() {
+        welcomeScreen = false;
+        gameOverScreen = false;
         this.repaint();
     }
 }
