@@ -8,8 +8,8 @@ public class GameViewer extends JFrame {
     private static final int CARD_WIDTH = 100;
     private static final int CARD_HEIGHT = 150;
     private static final int CARD_SPACING = 20;
-    private static final int START_X = 50;
-    private static final int PLAYER_Y = 300;
+    private static final int START_X = 300;
+    private static final int PLAYER_Y = 500;
     private static final int DEALER_Y = 100;
     private Game backend;
     private Image backgroundImage;
@@ -56,7 +56,7 @@ public class GameViewer extends JFrame {
             g.drawImage(welcomeImage, 0, 22, WINDOW_WIDTH, WINDOW_HEIGHT, this);
             g.setColor(Color.BLACK);
             g.setFont(new Font("Arial", Font.BOLD, 30));
-            g.drawString("Type anything to start the game!", START_X, WINDOW_HEIGHT - 100);
+            g.drawString("Type your name if on first screen. Else type anything!", 90, WINDOW_HEIGHT - 100);
         }
         else if (gameOverScreen == true) {
             if (playerWon) {
@@ -73,8 +73,8 @@ public class GameViewer extends JFrame {
                 drawHand(g, backend.getDealerHand(), START_X, DEALER_Y, !backend.isDealerTurn());
 
                 g.setColor(Color.BLACK);
-                g.setFont(new Font("Arial", Font.PLAIN, 20));
-                g.drawString("Enter 'hit' or 'stand' in the console to continue.", START_X, WINDOW_HEIGHT - 20);
+                g.setFont(new Font("Arial", Font.ITALIC, 30));
+                g.drawString("Enter 'hit' or 'stand' in the console to continue.", 100, WINDOW_HEIGHT - 20);
             }
     }
     private void drawHand(Graphics g, ArrayList<Card> hand, int x, int y, boolean hideFirstCard) {

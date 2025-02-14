@@ -159,8 +159,6 @@ public class Game {
             scanner.nextLine();
 
         }
-
-
         //define some methods used in the GameViewer
     public ArrayList<Card> getDealerHand() {
         return dealer.getHand();
