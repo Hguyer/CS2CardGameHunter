@@ -35,6 +35,8 @@ public class Game {
 
         // Show welcome screen
         viewer.showWelcomeScreen();
+        System.out.print("Press Enter to continue...");
+        names.nextLine();
 
         // Start the game after welcome screen interaction
         dealInitialHands();
@@ -127,7 +129,7 @@ public class Game {
             return points;
         }
 
-        public Player determineWinner() {
+        public void determineWinner() {
             int playerPoints = calculateValue(player);
             int dealerPoints = calculateValue(dealer);
 
@@ -135,17 +137,29 @@ public class Game {
             System.out.println(player);
             System.out.println(dealer);
 
-            if (playerPoints > dealerPoints && playerPoints <= 21 || dealerPoints > 21) {
+            Scanner scanner = new Scanner(System.in);
+            boolean playerWon;
+
+            if ((playerPoints > dealerPoints && playerPoints <= 21) || dealerPoints > 21) {
                 System.out.println("You win!");
-                return player;
+                viewer.showWinScreen();
+                playerWon = true;
             } else if (playerPoints < dealerPoints && dealerPoints <= 21) {
                 System.out.println("Dealer wins!");
-                return dealer;
+                viewer.showLoseScreen();
+                playerWon = false;
             } else {
                 System.out.println("It's a tie!");
-                return null;
+                playerWon = false;
             }
+
+            viewer.setGameOver(true, playerWon);
+
+            System.out.print("Press Enter to continue...");
+            scanner.nextLine();
+
         }
+
 
         //define some methods used in the GameViewer
     public ArrayList<Card> getDealerHand() {
@@ -154,17 +168,6 @@ public class Game {
 
     public ArrayList<Card> getPlayerHand() {
         return player.getHand();
-    }
-
-    public boolean isGameOver() {
-        return player.getMoney() <= 0;
-    }
-
-    public String getGameResult() {
-        if(isGameOver()){
-            return"Game over!";
-        }
-        return "";
     }
 
     // play the game

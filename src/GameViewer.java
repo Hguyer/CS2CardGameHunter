@@ -18,6 +18,7 @@ public class GameViewer extends JFrame {
     private Image loseImage;
     private boolean welcomeScreen = true;
     private boolean gameOverScreen = false;
+    private boolean playerWon;
 
 
     public GameViewer(Game back) {
@@ -27,7 +28,21 @@ public class GameViewer extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setVisible(true);
-        // set the background image
+        loadImages();
+
+    }
+    public void showGameScreen() {
+        welcomeScreen = false;
+        gameOverScreen = false;
+        repaint();
+    }
+    public void setGameOver(boolean gameOver, boolean playerWon) {
+        this.gameOverScreen = gameOver;
+        this.playerWon = playerWon;
+        repaint();
+    }
+
+    private void loadImages() {
         welcomeImage = new ImageIcon("Resources/Welcome.png").getImage();
         backgroundImage = new ImageIcon("Resources/Background.png").getImage();
         winImage = new ImageIcon("Resources/Winner.png").getImage();
@@ -37,33 +52,30 @@ public class GameViewer extends JFrame {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        if (welcomeScreen) {
-            g.drawImage(welcomeImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+        if (welcomeScreen == true) {
+            g.drawImage(welcomeImage, 0, 22, WINDOW_WIDTH, WINDOW_HEIGHT, this);
             g.setColor(Color.BLACK);
             g.setFont(new Font("Arial", Font.BOLD, 30));
             g.drawString("Type anything to start the game!", START_X, WINDOW_HEIGHT - 100);
         }
-        else if (gameOverScreen) {
-            if (backend.determineWinner() == backend.player) {
+        else if (gameOverScreen == true) {
+            if (playerWon) {
                 g.drawImage(winImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
-            }
-            else {
+            } else {
                 g.drawImage(loseImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
             }
-            g.setColor(Color.BLACK);
-            g.setFont(new Font("Arial", Font.BOLD, 30));
-            g.drawString("To continue, type anything in the console!", START_X, WINDOW_HEIGHT - 100);
+            drawHand(g, backend.getPlayerHand(), START_X, PLAYER_Y, false);
+            drawHand(g, backend.getDealerHand(), START_X, DEALER_Y, false);
         }
         else {
-            g.drawImage(backgroundImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+                g.drawImage(backgroundImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+                drawHand(g, backend.getPlayerHand(), START_X, PLAYER_Y, false);
+                drawHand(g, backend.getDealerHand(), START_X, DEALER_Y, !backend.isDealerTurn());
 
-            drawHand(g, backend.getPlayerHand(), START_X, PLAYER_Y, false);
-            drawHand(g, backend.getDealerHand(), START_X, DEALER_Y, !backend.isDealerTurn());
-
-            g.setColor(Color.BLACK);
-            g.setFont(new Font("Arial", Font.PLAIN, 20));
-            g.drawString("Enter 'hit' or 'stay' in the console to continue.", START_X, WINDOW_HEIGHT - 20);
-        }
+                g.setColor(Color.BLACK);
+                g.setFont(new Font("Arial", Font.PLAIN, 20));
+                g.drawString("Enter 'hit' or 'stand' in the console to continue.", START_X, WINDOW_HEIGHT - 20);
+            }
     }
     private void drawHand(Graphics g, ArrayList<Card> hand, int x, int y, boolean hideFirstCard) {
         int cardSpace = CARD_WIDTH + CARD_SPACING;
