@@ -77,8 +77,11 @@ public class Game {
                     System.out.println(player);
                     if (calculateValue(player) > 21) {
                         System.out.println("You busted!");
-                        playerBusted = true;
-                        break;
+                        viewer.showLoseScreen(); // Show the lose screen immediately when the player busts
+                        viewer.setGameOver(true, false);
+                        System.out.print("Press Enter to continue...");
+                        scanner.nextLine();
+                        return;
                     }
                 } else if (choice.equals("stand")) {
                     break;

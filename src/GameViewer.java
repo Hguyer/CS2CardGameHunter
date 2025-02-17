@@ -6,10 +6,10 @@ public class GameViewer extends JFrame {
     private static final int WINDOW_HEIGHT = 800;
     private static final int WINDOW_WIDTH = 1000;
     private static final int CARD_WIDTH = 100;
-    private static final int CARD_HEIGHT = 150;
+    private static final int CARD_HEIGHT = 125;
     private static final int CARD_SPACING = 20;
-    private static final int START_X = 300;
-    private static final int PLAYER_Y = 500;
+    private static final int START_X = 200;
+    private static final int PLAYER_Y = 550;
     private static final int DEALER_Y = 100;
     private Game backend;
     private Image backgroundImage;
@@ -56,13 +56,13 @@ public class GameViewer extends JFrame {
             g.drawImage(welcomeImage, 0, 22, WINDOW_WIDTH, WINDOW_HEIGHT, this);
             g.setColor(Color.BLACK);
             g.setFont(new Font("Arial", Font.BOLD, 30));
-            g.drawString("Type your name if on first screen. Else type anything!", 90, WINDOW_HEIGHT - 100);
+            g.drawString("Type your name if on first screen. Or type anything!", 90, WINDOW_HEIGHT - 100);
         }
         else if (gameOverScreen == true) {
             if (playerWon) {
-                g.drawImage(winImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+                g.drawImage(winImage, 0, 22, WINDOW_WIDTH, WINDOW_HEIGHT, this);
             } else {
-                g.drawImage(loseImage, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+                g.drawImage(loseImage, 0, 22, WINDOW_WIDTH, WINDOW_HEIGHT, this);
             }
             drawHand(g, backend.getPlayerHand(), START_X, PLAYER_Y, false);
             drawHand(g, backend.getDealerHand(), START_X, DEALER_Y, false);
