@@ -6,11 +6,11 @@ public class GameViewer extends JFrame {
     private static final int WINDOW_HEIGHT = 800;
     private static final int WINDOW_WIDTH = 1000;
     private static final int CARD_WIDTH = 100;
-    private static final int CARD_HEIGHT = 125;
+    private static final int CARD_HEIGHT = 135;
     private static final int CARD_SPACING = 20;
-    private static final int START_X = 200;
-    private static final int PLAYER_Y = 550;
-    private static final int DEALER_Y = 100;
+    private static final int START_X = 300;
+    private static final int PLAYER_Y = 600;
+    private static final int DEALER_Y = 50;
     private Game backend;
     private Image backgroundImage;
     private Image welcomeImage;
@@ -30,11 +30,6 @@ public class GameViewer extends JFrame {
         this.setVisible(true);
         loadImages();
 
-    }
-    public void showGameScreen() {
-        welcomeScreen = false;
-        gameOverScreen = false;
-        repaint();
     }
     public void setGameOver(boolean gameOver, boolean playerWon) {
         this.gameOverScreen = gameOver;
@@ -56,7 +51,7 @@ public class GameViewer extends JFrame {
             g.drawImage(welcomeImage, 0, 22, WINDOW_WIDTH, WINDOW_HEIGHT, this);
             g.setColor(Color.BLACK);
             g.setFont(new Font("Arial", Font.BOLD, 30));
-            g.drawString("Type your name if on first screen. Or type anything!", 90, WINDOW_HEIGHT - 100);
+            g.drawString("Type your name if on first screen. Or type anything!", 90, WINDOW_HEIGHT - 30);
         }
         else if (gameOverScreen == true) {
             if (playerWon) {
@@ -74,7 +69,7 @@ public class GameViewer extends JFrame {
 
                 g.setColor(Color.BLACK);
                 g.setFont(new Font("Arial", Font.ITALIC, 30));
-                g.drawString("Enter 'hit' or 'stand' in the console to continue.", 100, WINDOW_HEIGHT - 20);
+                g.drawString("Enter 'hit' or 'stand' in the console to continue.", 150, WINDOW_HEIGHT - 20);
             }
     }
     private void drawHand(Graphics g, ArrayList<Card> hand, int x, int y, boolean hideFirstCard) {
