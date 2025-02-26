@@ -44,6 +44,7 @@ public class Game {
         playGame();
 
     }
+    // clear both hands, schuffle the deck and add two cards
     private void dealInitialHands() {
         player.getHand().clear();
         dealer.getHand().clear();
@@ -61,35 +62,41 @@ public class Game {
     public void playGame() {
         Scanner scanner = new Scanner(System.in);
         boolean gameOn = true;
-
+        // make a loop for the game while playing
         while (gameOn) {
+            // set it to be the players turn, deal the hands
             dealerTurn = false;
             dealInitialHands();
             viewer.refresh();
             boolean playerBusted = false;
-
+            // forever loop
             while (true) {
+                // ask if they want to hit or stand
                 System.out.print("Would you like to hit or stand?: ");
                 String choice = scanner.nextLine().toLowerCase();
+                // if they hit give a card
                 if (choice.equals("hit")) {
                     player.addCard(deck.deal());
                     viewer.refresh();
                     System.out.println(player);
+                    // if they bust they lose and show the losing screen
                     if (calculateValue(player) > 21) {
                         System.out.println("You busted!");
-                        viewer.showLoseScreen(); // Show the lose screen immediately when the player busts
+                        viewer.showLoseScreen();
+                        // set paremeters for a function used later, game is over, player lost
                         viewer.setGameOver(true, false);
                         System.out.print("Press Enter to continue...");
                         scanner.nextLine();
                         return;
                     }
+                    // if they stand exti
                 } else if (choice.equals("stand")) {
                     break;
                 } else {
                     System.out.println("Invalid choice. Enter only 'hit' or 'stand'.");
                 }
             }
-
+            // if the player didn't bust make it the dealers turn
             if (!playerBusted) {
                 dealerTurn();
             }
@@ -105,7 +112,7 @@ public class Game {
         System.out.println("\nDealer's turn:");
         dealerTurn = true;
         viewer.refresh();
-
+        // when the dealer is 16 or below hit
         while (calculateValue(dealer) < 17) {
             System.out.println("Dealer hits.");
             dealer.addCard(deck.deal());
@@ -116,6 +123,7 @@ public class Game {
         determineWinner();
     }
 
+    // make a function to count aces and return the value of a hand
         private int calculateValue(Player player) {
             int points = 0;
             int aces = 0;
@@ -131,7 +139,6 @@ public class Game {
             }
             return points;
         }
-
         public void determineWinner() {
             int playerPoints = calculateValue(player);
             int dealerPoints = calculateValue(dealer);
@@ -143,6 +150,8 @@ public class Game {
             Scanner scanner = new Scanner(System.in);
             boolean playerWon;
 
+            // whoevers points are higher wins
+            // in this game a tie loses
             if ((playerPoints > dealerPoints && playerPoints <= 21) || dealerPoints > 21) {
                 System.out.println("You win!");
                 viewer.showWinScreen();
